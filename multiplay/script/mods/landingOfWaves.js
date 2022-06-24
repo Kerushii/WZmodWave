@@ -274,6 +274,7 @@ function wa_eventGameInit()
 	setScrollLimits(startZone.x, startZone.y, startZone.x2, startZone.y2);
 	console(
 		[
+			"Feedbacks to Kal'tist at https://github.com/Kerushii/WZmodWave",
 			"difficulty " + waveDifficulty,
 			"protectTime " + settings.protectTime,
 			"PauseTime " + settings.PauseTime,

@@ -49,14 +49,10 @@ function getRandom (arr, n)
 
 function getTotalTimeS()
 {
-	if (((gameTime / 1000) + getStartTime()) >= settings.timeHandicapM/60)
-	{
-		return ((gameTime / 1000) + getStartTime() - settings.timeHandicapM/60);
-	}
-	else
-	{
-		return ((gameTime / 1000) + getStartTime());
-	}
+
+	return (settings.resDampen*(gameTime / 1000) + getStartTime());
+
+		
 }
 
 function getStartTime()
