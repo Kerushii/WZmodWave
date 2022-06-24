@@ -349,10 +349,10 @@ function getTemplates(timeS, type)
 	redComponents = getRedComponents(timeS);
 	for (var key in allTemplates)
 	{
-		/*if (!allTemplates[key].weapons)
+		if (!allTemplates[key].weapons)
 		{
 			continue;
-		}*/
+		}
 		if (
 			makeTemplate(
 				AI,
