@@ -1,4 +1,20 @@
 {
+	"BOSS": {
+		"boss": true,
+		"available": true,
+		"body": "SuperTransportBody",
+		"id": "superBOSS",
+		"name": "Superboss",
+		"propulsion": "tracked01",
+		"type": "DROID",
+		"weapons": [
+			"MissileSuper",
+			"MassDriver",
+			"AAGunLaser",
+			"Laser4-PlasmaCannon"
+		]
+	},
+
 	"A-Cobra-Hover-HMG": {
 		"body": "Body5REC",
 		"id": "A-Cobra-Hover-HMG",

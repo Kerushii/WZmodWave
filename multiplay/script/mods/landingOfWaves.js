@@ -349,10 +349,10 @@ function getTemplates(timeS, type)
 	redComponents = getRedComponents(timeS);
 	for (var key in allTemplates)
 	{
-		if (!allTemplates[key].weapons)
+		/*if (!allTemplates[key].weapons)
 		{
 			continue;
-		}
+		}*/
 		if (
 			makeTemplate(
 				AI,
@@ -406,23 +406,39 @@ function pushUnits()
 {
 	let tiles = Object.assign([], wave.LZ.tiles);
 	hackNetOff();
+	let upperPossibility = numberWave%10;
+	if (Math.floor(Math.random() * 10)<=upperPossibility)
+		bossMission=true;
+	if(bossMission){
+		let unit = addDroid(
+			AI,
+			pos.x,
+			pos.y,
+			droidName,
+			"SuperTransportBody",
+			"tracked01",
+			"",
+			"",
+			[
+				"MissileSuper",
+				"MassDriver",
+				"AAGunLaser",
+				"Laser4-PlasmaCannon"
+			]
+		);
+		wave.droids.push(unit);
+		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
+		console("Wave number","???", "???", ": ???");
+		setMissionTime(-1);
+		hackNetOn();
+		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
+		return;
+	}
+	
 	while (wave.budget > 0 && tiles.length > 0)
 	{
 		let droidName = wave.droidsName.shift();
 		let pos = tiles.shift();
-		/*
-			if (allTemplates[droidName].propulsion == "V-Tol")
-			{
-				let borders = [
-					{ x: 2, y: pos.y },
-					{ x: pos.x, y: 2 },
-					{ x: mapWidth - 2, y: pos.y },
-					{ x: pos.x, y: mapHeight - 2 },
-				];
-				sortBymDist(borders, pos);
-				pos = borders.shift();
-			}
-*/
 		let unit = addDroid(
 			AI,
 			pos.x,
