@@ -6,45 +6,39 @@ const settings = includeJSON("settings.json");
 const research = includeJSON("research.json");
 // константы типы волн
 const WAVETYPE = ["NORMAL", "ROYAL"];
-var wave = {time:0, active: false };
+var wave = { time: 0, active: false };
 var numberWave = 0;
 const BORDER = 4;
 
-const {waveDifficulty, AI} =  getWaveAI(); //num wawe AI
+const { waveDifficulty, AI } = getWaveAI(); //num wawe AI
 var redComponents = [];
 
 namespace("wa_");
 
-function getWaveAI()
-{
+function getWaveAI() {
 	let AI = false;
 	let waveDifficulty = 1;
 	// Defining script variables
-	if (scavengers != 0)
-	{
+	if (scavengers != 0) {
 		AI = scavengerPlayer;
 		waveDifficulty = (scavengers + 2) / 3; //general danger of waves 1, 1.33
 
 	}
-	else
-	{
-		for (var playnum = 0; playnum < maxPlayers; playnum++)
-		{
+	else {
+		for (var playnum = 0; playnum < maxPlayers; playnum++) {
 			if (
 				playerData[playnum].isAI == true &&
-      playerData[playnum].name == "Wave"
-			)
-			{
+				playerData[playnum].name == "Wave"
+			) {
 				AI = playnum;
 				waveDifficulty = (playerData[AI].difficulty + 2) / 3; //general danger of waves 0.66, 1, 1.33, 1.6
 			}
 		}
 	}
-	return {AI:AI, waveDifficulty: waveDifficulty};
+	return { AI: AI, waveDifficulty: waveDifficulty };
 }
 
-function avalibleScavComponents(player)
-{
+function avalibleScavComponents(player) {
 
 	const SCAV_COMPONENTS = [
 		"B4body-sml-trike01",
@@ -88,18 +82,16 @@ function avalibleScavComponents(player)
 		"Mortar1Mk1",
 	];
 
-	for (var i = 0, len = SCAV_COMPONENTS.length; i < len; ++i)
-	{
+	for (var i = 0, len = SCAV_COMPONENTS.length; i < len; ++i) {
 		makeComponentAvailable(SCAV_COMPONENTS[i], player);
 	}
 }
 
-function getLZ()
-{
+function getLZ() {
 	let limits = getScrollLimits();
 	const radius = 4;
-	let LZ= {
-		x: syncRandom(limits.x2-2*(BORDER+radius))+BORDER+radius,
+	let LZ = {
+		x: syncRandom(limits.x2 - 2 * (BORDER + radius)) + BORDER + radius,
 		y: limits.y + BORDER + radius,
 		radius: radius,
 	};
@@ -107,84 +99,66 @@ function getLZ()
 	return LZ;
 }
 
-function LZtile(LZ)
-{
+function LZtile(LZ) {
 	const PLACE = "O"; //landing place
 	const CLIFF = "X"; //impassable tile
 	const POSS = "."; //landing is possible
 
-	function isPassable(x, y)
-	{
+	function isPassable(x, y) {
 		//TODO добавить проверку есть ли тут объект
 		return (
 			terrainType(x, y) !== TER_CLIFFFACE && terrainType(x, y) !== TER_WATER
 		);
 	}
 
-	function markAvailableTile(tiles)
-	{
+	function markAvailableTile(tiles) {
 		let addPOSS = false;
-		tiles.forEach(function O(row, x)
-		{
-			row.forEach(function M(tile, y)
-			{
-				if (tile == CLIFF)
-				{
+		tiles.forEach(function O(row, x) {
+			row.forEach(function M(tile, y) {
+				if (tile == CLIFF) {
 					return;
 				}
-				if (tile == PLACE)
-				{
+				if (tile == PLACE) {
 					return;
 				}
 				if (
 					tile == POSS &&
-          ((tiles[x - 1] && tiles[x - 1][y] == PLACE) ||
-            (tiles[x + 1] && tiles[x + 1][y] == PLACE) ||
-            tiles[x][y - 1] == PLACE ||
-            tiles[x][y + 1] == PLACE)
-				)
-				{
+					((tiles[x - 1] && tiles[x - 1][y] == PLACE) ||
+						(tiles[x + 1] && tiles[x + 1][y] == PLACE) ||
+						tiles[x][y - 1] == PLACE ||
+						tiles[x][y + 1] == PLACE)
+				) {
 					tiles[x][y] = PLACE;
 					addPOSS = true;
 				}
 			});
 		});
-		if (addPOSS)
-		{
+		if (addPOSS) {
 			markAvailableTile(tiles);
 		} // TODO заменить на цикл
 	}
 
 	let tiles = [];
-	for (let x = LZ.x - LZ.radius; x <= LZ.x + LZ.radius; x++)
-	{
+	for (let x = LZ.x - LZ.radius; x <= LZ.x + LZ.radius; x++) {
 		tiles[x] = [];
-		for (let y = LZ.y - LZ.radius; y <= LZ.y + LZ.radius; y++)
-		{
-			if (isPassable(x, y))
-			{
+		for (let y = LZ.y - LZ.radius; y <= LZ.y + LZ.radius; y++) {
+			if (isPassable(x, y)) {
 				tiles[x][y] = POSS;
 			} // TODO add check radius
-			else
-			{
+			else {
 				tiles[x][y] = CLIFF;
 			}
 		}
 	}
-	if (isPassable(LZ.x, LZ.y))
-	{
+	if (isPassable(LZ.x, LZ.y)) {
 		tiles[LZ.x][LZ.y] = PLACE;
 	}
-	else
-	{
+	else {
 		var naruto = [];
-		tiles.forEach((Xs, x) =>
-		{
-			Xs.forEach((Ys,y) =>
-			{
-				if (isPassable(x, y))
-				{
-					let sq = {x: x, y:y};
+		tiles.forEach((Xs, x) => {
+			Xs.forEach((Ys, y) => {
+				if (isPassable(x, y)) {
+					let sq = { x: x, y: y };
 					naruto.push(sq);
 				}
 			});
@@ -197,12 +171,9 @@ function LZtile(LZ)
 	markAvailableTile(tiles);
 
 	let LZtile = [];
-	for (let x = LZ.x - LZ.radius; x <= LZ.x + LZ.radius; x++)
-	{
-		for (let y = LZ.y - LZ.radius; y <= LZ.y + LZ.radius; y++)
-		{
-			if (tiles[x][y] == PLACE)
-			{
+	for (let x = LZ.x - LZ.radius; x <= LZ.x + LZ.radius; x++) {
+		for (let y = LZ.y - LZ.radius; y <= LZ.y + LZ.radius; y++) {
+			if (tiles[x][y] == PLACE) {
 				LZtile.push({ x: x, y: y });
 			}
 		}
@@ -212,46 +183,41 @@ function LZtile(LZ)
 	return LZtile;
 }
 
-function addSpoter()
-{
+function addSpoter() {
 	let spotter = {
 		x: mapWidth / 2,
 		y: mapHeight / 2,
 		radius: (Math.sqrt(mapWidth * mapWidth + mapHeight * mapHeight) / 2) * 128,
 	};
-	for (let playnum = 0; playnum < maxPlayers; playnum++)
-	{
+	for (let playnum = 0; playnum < maxPlayers; playnum++) {
 		addSpotter(spotter.x, spotter.y, playnum, spotter.radius, 0, 1000);
 	}
 }
 
-function newWave()
-{
+function newWave() {
 	let zone = getScrollLimits();
 	zone.y -= settings.expansion;
-	if (zone.y <0)
-	{
-		zone.y =0;
+	if (zone.y < 0) {
+		zone.y = 0;
 	}
 	setScrollLimits(zone.x, zone.y, zone.x2, zone.y2);
 	giveResearch();
 	recalcLimits();
-	let budget = calcBudget(gameTime/1000 + getStartTime());
-	wave= {
+	let budget = calcBudget(gameTime / 1000 + getStartTime());
+	wave = {
 		type: "NORMAL",
 		budget: budget.budget,
 		rang: budget.rang,
 		experience: budget.experience,
 		droids: [],
-		active:true,
-		time:0
+		active: true,
+		time: 0
 	};
 
 }
 
-function calcBudget(timeS)
-{
-	timeS = timeS - settings.protectTimeM*60/3;
+function calcBudget(timeS) {
+	timeS = timeS - settings.protectTimeM * 60 / 3;
 	let K = getNumOil() * settings.Kpower;
 	// Игрок по мере игры получает апы на ген, что проиводит к росуту доступных ресурсов.
 	// При первом приблежении вторая производная энергии по времени прямая с увеличением в два раза за 20 минут.
@@ -267,10 +233,9 @@ function calcBudget(timeS)
 	return { budget: budget, rang: rang, experience: Math.round(2 ** rang) };
 }
 
-function wa_eventGameInit()
-{
+function wa_eventGameInit() {
 	addSpoter();
-	const startZone = {x:0, y:(mapHeight-settings.startHeight), x2:mapWidth, y2:mapHeight };
+	const startZone = { x: 0, y: (mapHeight - settings.startHeight), x2: mapWidth, y2: mapHeight };
 	setScrollLimits(startZone.x, startZone.y, startZone.x2, startZone.y2);
 	console(
 		[
@@ -281,56 +246,46 @@ function wa_eventGameInit()
 		].join("\n")
 	);
 	cleanUnitsAndStruct();
-	queue("recalcLimits",100);
-	queue("pushUnitsAndStruct",200);
+	queue("recalcLimits", 100);
+	queue("pushUnitsAndStruct", 200);
 	setTimer("scheduler", 6 * 1000);
 	scheduler();
 	setTimer("removeVtol", 11 * 1000);
-	setMissionTime(settings.protectTimeM*60);
+	setMissionTime(settings.protectTimeM * 60);
 	makeComponentAvailable("MG1Mk1", AI);
 	avalibleScavComponents(AI);
 }
 
-function removeVtol()
-{
+function removeVtol() {
 	enumDroid(AI, "DROID_WEAPON")
-		.filter((d) =>
-		{
+		.filter((d) => {
 			return d.isVTOL && d.weapons[0].armed < 1;
 		})
-		.forEach((v) =>
-		{
+		.forEach((v) => {
 			removeObject(v);
 		});
 }
 
-function scheduler()
-{
-	if (settings.protectTimeM *60 > gameTime / 1000)
-	{
+function scheduler() {
+	if (settings.protectTimeM * 60 > gameTime / 1000) {
 		return;
 	}
 	wave.droids = enumDroid(AI, "DROID_WEAPON");
-	if (wave.droids.length == 0 && wave.active == true)
-	{
-		wave.time = gameTime/1000 + settings.pauseM * 60;
-		setMissionTime(settings.pauseM*60);
+	if (wave.droids.length == 0 && wave.active == true) {
+		wave.time = gameTime / 1000 + settings.pauseM * 60;
+		setMissionTime(settings.pauseM * 60);
 		wave.active = false;
 	}
- 	if (wave.time <= gameTime/1000)
-	{
-		if (wave.active == false)
-		{
+	if (wave.time <= gameTime / 1000) {
+		if (wave.active == false) {
 			newWave();
 		}
 		landing();
 	}
 }
 
-function landing()
-{
-	if (wave.budget <= 0)
-	{
+function landing() {
+	if (wave.budget <= 0) {
 		return;
 	}
 	// делаем высадку
@@ -343,14 +298,11 @@ function landing()
 	pushUnits();
 }
 
-function getTemplates(timeS, type)
-{
+function getTemplates(timeS, type) {
 	avalibleTemplate = [];
 	redComponents = getRedComponents(timeS);
-	for (var key in allTemplates)
-	{
-		if (!allTemplates[key].weapons || !allTemplates[key].propulsion || !allTemplates[key].body)
-		{
+	for (var key in allTemplates) {
+		if (!allTemplates[key].weapons || !allTemplates[key].propulsion || !allTemplates[key].body) {
 			continue;
 		}
 		if (
@@ -362,77 +314,71 @@ function getTemplates(timeS, type)
 				"",
 				allTemplates[key].weapons
 			) !== null && //у makeTemplate изменен синтаксис в мастере. Не совместимо с 3.4.1
-        allTemplates[key].propulsion != "wheeled01" &&
-        allTemplates[key].weapons[0] != "CommandTurret1" &&
-        allTemplates[key].weapons[0] != "MG1Mk1" &&
-        !redComponents.includes(allTemplates[key].weapons[0])
-		)
-		{
+			allTemplates[key].propulsion != "wheeled01" &&
+			allTemplates[key].weapons[0] != "CommandTurret1" &&
+			allTemplates[key].weapons[0] != "MG1Mk1" &&
+			!redComponents.includes(allTemplates[key].weapons[0])
+		) {
 			avalibleTemplate.push(key);
 		}
 	}
-	if (avalibleTemplate.length == 0)
-	{
+	if (avalibleTemplate.length == 0) {
 		avalibleTemplate.push("ViperMG01Wheels");
 	}
 	return avalibleTemplate;
 
-	function getRedComponents(timeS)
-	{
+	function getRedComponents(timeS) {
 		redComponents = [];
-		for (var tech in allRes)
-		{
-			if (allRes[tech] <= timeS && research[tech].redComponents)
-			{
+		for (var tech in allRes) {
+			if (allRes[tech] <= timeS && research[tech].redComponents) {
 				redComponents = redComponents.concat(research[tech].redComponents);
 			}
 		}
 		return redComponents;
 	}
 }
-function setDroidsName()
-{
+function setDroidsName() {
 	wave.droidsName = [];
 
-	for (let i = 0; i < wave.LZ.tiles.length; i++)
-	{
+	for (let i = 0; i < wave.LZ.tiles.length; i++) {
 		let droidName =
-        wave.templates[syncRandom(wave.templates.length)];
+			wave.templates[syncRandom(wave.templates.length)];
 		wave.droidsName.push(droidName);
 	}
 }
 
-function pushUnits()
-{
+function pushUnits() {
 	let tiles = Object.assign([], wave.LZ.tiles);
 	hackNetOff();
-	var bossMission=false;
-	let seed=[2,2,2,7,4,9,8,7,6,4,3,2,7,8,4,9,2,7,4,6,2,7,8,4,9,4,3,7,3,8,9,7,3,5,2,8,3,2,9,4,3,7,5,2,8,3,9,4,3];
-	if (seed[numberWave]%2 == 1)
-		bossMission=true;
-	if(bossMission){
-		let pos = tiles.shift();
-		let droidName = "MEGA BOSS";
-		let unit = addDroid(
-			AI,
-			pos.x,
-			pos.y,
-			droidName,
-			"SuperTransportBody",
-			"V-Tol",
-			"",
-			"",
-			[
-				"MissileSuper",
-				"MassDriver",
-				"AAGunLaser",
-				"Laser4-PlasmaCannon"
-			]
-		);
-		setDroidExperience(unit, wave.experience);
-		wave.droids.push(unit);
-		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
-		console("Wave number","???", "???", ": ???");
+	var bossMission = false;
+	let seed = [2, 2, 2, 7, 4, 9, 8, 7, 6, 4, 3, 2, 7, 8, 4, 9, 2, 7, 4, 6, 2, 7, 8, 4, 9, 4, 3, 7, 3, 8, 9, 7, 3, 5, 2, 8, 3, 2, 9, 4, 3, 7, 5, 2, 8, 3, 9, 4, 3];
+	if (seed[numberWave] % 3 == 1)
+		bossMission = true;
+	if (bossMission) {
+		var bossNum = 0
+		while (bossNum <= numberWave) {
+			let pos = tiles.shift();
+			let droidName = "MEGA BOSS";
+			let unit = addDroid(
+				AI,
+				pos.x,
+				pos.y,
+				droidName,
+				"Body14SUP",
+				"V-Tol",
+				"",
+				"",
+				[
+					"AAGunLaser",
+					"MassDriver"
+				]
+			);
+			setDroidExperience(unit, wave.experience);
+			wave.droids.push(unit);
+			bossNum++;
+		}
+		debug("Wave number", numberWave + ".", "Units landed", wave.droids.length + ".");
+		console("Wave number", "???", "???", ": ???");
 		wave.budget = 0;
 		numberWave++;
 		hackNetOn();
@@ -440,9 +386,8 @@ function pushUnits()
 		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 		return;
 	}
-	
-	while (wave.budget > 0 && tiles.length > 0)
-	{
+
+	while (wave.budget > 0 && tiles.length > 0) {
 		let droidName = wave.droidsName.shift();
 		let pos = tiles.shift();
 		let unit = addDroid(
@@ -468,20 +413,18 @@ function pushUnits()
 		wave.droids.push(unit);
 	}
 	hackNetOn();
-	if (wave.budget <= 0)
-	{
+	if (wave.budget <= 0) {
 		numberWave++;
-		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
-		console("Wave number",numberWave+".", "Units landed", wave.droids.length+".");
+		debug("Wave number", numberWave + ".", "Units landed", wave.droids.length + ".");
+		console("Wave number", numberWave + ".", "Units landed", wave.droids.length + ".");
 		setMissionTime(-1);
-		
+
 	}
 	playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 }
 
 
-function giveResearch()
-{
+function giveResearch() {
 	hackNetOff();
 	completeResearchOnTime(getTotalTimeS(), AI);
 	hackNetOn();
