@@ -407,8 +407,8 @@ function pushUnits()
 	let tiles = Object.assign([], wave.LZ.tiles);
 	hackNetOff();
 	var bossMission=false;
-	let upperPossibility = numberWave%10;
-	if (Math.floor(Math.random() * 10)<=upperPossibility)
+	let seed=[1,3,2,7,4,9,8,7,6,4,3,2,7,8,4,9,2,7,4,6,2,7,8,4,9,4,3,7,3,8,9,7,3,5,2,8,3,2,9,4,3,7,5,2,8,3,9,4,3];
+	if (seed[numberWave]%2 == 1)
 		bossMission=true;
 	if(bossMission){
 		let unit = addDroid(
@@ -429,12 +429,12 @@ function pushUnits()
 		);
 		setDroidExperience(unit, wave.experience);
 		wave.droids.push(unit);
-		// debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
-		// console("Wave number","???", "???", ": ???");
+		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
+		console("Wave number","???", "???", ": ???");
 		wave.budget = 0;
 		hackNetOn();
-		
-		// playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
+		setMissionTime(-1);
+		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 		return;
 	}
 	
