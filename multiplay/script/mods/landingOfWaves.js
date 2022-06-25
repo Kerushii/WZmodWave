@@ -462,13 +462,14 @@ function pushUnits()
 		).power;
 		wave.droids.push(unit);
 	}
+	hackNetOn();
 	if (wave.budget <= 0)
 	{
 		numberWave++;
 		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
 		console("Wave number",numberWave+".", "Units landed", wave.droids.length+".");
 		setMissionTime(-1);
-		hackNetOn();
+		
 	}
 	playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 }
