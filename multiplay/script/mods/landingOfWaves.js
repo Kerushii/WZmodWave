@@ -349,7 +349,7 @@ function getTemplates(timeS, type)
 	redComponents = getRedComponents(timeS);
 	for (var key in allTemplates)
 	{
-		if (!allTemplates[key].weapons)
+		if (!allTemplates[key].weapons || !allTemplates[key].propulsion || !allTemplates[key].body)
 		{
 			continue;
 		}
@@ -406,6 +406,7 @@ function pushUnits()
 {
 	let tiles = Object.assign([], wave.LZ.tiles);
 	hackNetOff();
+	var bossMission=false;
 	let upperPossibility = numberWave%10;
 	if (Math.floor(Math.random() * 10)<=upperPossibility)
 		bossMission=true;
