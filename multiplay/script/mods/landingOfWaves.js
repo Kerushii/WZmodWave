@@ -427,11 +427,12 @@ function pushUnits()
 				"Laser4-PlasmaCannon"
 			]
 		);
+		setDroidExperience(unit, wave.experience);
 		wave.droids.push(unit);
 		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
 		console("Wave number","???", "???", ": ???");
-		setMissionTime(-1);
 		hackNetOn();
+		setMissionTime(-1);
 		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 		return;
 	}
