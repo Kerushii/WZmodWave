@@ -411,6 +411,8 @@ function pushUnits()
 	if (seed[numberWave]%2 == 1)
 		bossMission=true;
 	if(bossMission){
+		let pos = tiles.shift();
+		let droidName = "MEGA BOSS";
 		let unit = addDroid(
 			AI,
 			pos.x,
