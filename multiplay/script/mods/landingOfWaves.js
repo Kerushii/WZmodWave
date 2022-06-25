@@ -407,7 +407,7 @@ function pushUnits()
 	let tiles = Object.assign([], wave.LZ.tiles);
 	hackNetOff();
 	var bossMission=false;
-	let seed=[1,3,2,7,4,9,8,7,6,4,3,2,7,8,4,9,2,7,4,6,2,7,8,4,9,4,3,7,3,8,9,7,3,5,2,8,3,2,9,4,3,7,5,2,8,3,9,4,3];
+	let seed=[2,2,2,7,4,9,8,7,6,4,3,2,7,8,4,9,2,7,4,6,2,7,8,4,9,4,3,7,3,8,9,7,3,5,2,8,3,2,9,4,3,7,5,2,8,3,9,4,3];
 	if (seed[numberWave]%2 == 1)
 		bossMission=true;
 	if(bossMission){
@@ -419,7 +419,7 @@ function pushUnits()
 			pos.y,
 			droidName,
 			"SuperTransportBody",
-			"tracked01",
+			"V-Tol",
 			"",
 			"",
 			[
@@ -434,6 +434,7 @@ function pushUnits()
 		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
 		console("Wave number","???", "???", ": ???");
 		wave.budget = 0;
+		numberWave++;
 		hackNetOn();
 		setMissionTime(-1);
 		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
