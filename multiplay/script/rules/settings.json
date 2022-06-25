@@ -3,8 +3,8 @@
 	"totalGameTime": 300,
 	"expansion": 5,
 	"startHeight": 35,
-	"Kpower" : 0.5,
+	"Kpower" : 0.7,
 	"doublePowerM": 30,
 	"pauseM": 4,
-	"resDampen": 0.75
+	"resDampen": 0.5
 }
