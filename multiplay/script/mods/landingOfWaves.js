@@ -429,11 +429,12 @@ function pushUnits()
 		);
 		setDroidExperience(unit, wave.experience);
 		wave.droids.push(unit);
-		debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
-		console("Wave number","???", "???", ": ???");
+		// debug("Wave number", numberWave+".", "Units landed", wave.droids.length+".");
+		// console("Wave number","???", "???", ": ???");
+		wave.budget = 0;
 		hackNetOn();
-		setMissionTime(-1);
-		playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
+		
+		// playSound("pcv395.ogg", wave.LZ.x, wave.LZ.y, 0);
 		return;
 	}
 	
